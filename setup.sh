@@ -1,8 +1,11 @@
 #!/bin/sh
 
 mkdir /media
+
 mkdir /data
+chown pi:pi /data
 mkdir /data/current
+chown pi:pi /data/current
 
 
 git config --global user.name "Vivek Bhaskaran"
