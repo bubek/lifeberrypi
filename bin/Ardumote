@@ -25,6 +25,7 @@ import socket
 import RPi.GPIO as GPIO
 import os
 
+
 GPIO.setmode(GPIO.BOARD)  #Set Pin Mode according to Board Layout
 
 #-----------------------------------------------------------------------------
@@ -32,15 +33,16 @@ GPIO.setmode(GPIO.BOARD)  #Set Pin Mode according to Board Layout
 
 #Outputs in Pin Number for P1 Header.  For example, GPIO.setup(7, GPIO.OUT) is for P1-07 (GPIO 4)
 
-GPIO.setup(3, GPIO.OUT)   
-GPIO.setup(5, GPIO.OUT)   
+#GPIO.setup(3, GPIO.OUT)   
+#GPIO.setup(5, GPIO.OUT)   
 GPIO.setup(7, GPIO.OUT)   
-GPIO.setup(8, GPIO.OUT)   
-GPIO.setup(10, GPIO.OUT)
-GPIO.setup(11, GPIO.OUT)   
-GPIO.setup(12, GPIO.OUT)    	
-GPIO.setup(13, GPIO.OUT)   
-GPIO.setup(15, GPIO.OUT)   
+#GPIO.setup(8, GPIO.OUT)   
+
+#GPIO.setup(10, GPIO.OUT)
+#GPIO.setup(11, GPIO.IN)   
+#GPIO.setup(12, GPIO.OUT)    	
+#GPIO.setup(13, GPIO.OUT)   
+#GPIO.setup(15, GPIO.OUT)   
 
 
 #Inputs
@@ -61,6 +63,7 @@ OutPort = 7777
 RxSock.bind((IP,InPort))
 
 while True:
+
 	data = RxSock.recvfrom(512)
 	message = data[0]
 	senderinfo = data[1]
@@ -68,7 +71,9 @@ while True:
 	print "message received: ", message
 	print "message length: ", len(message)
 	print "sender's IP: ", senderIP
-	
+		
+
+
 #-----------------------------------------------------------------------------
 
 	# Handle Messages for Shutdown & Reboot	

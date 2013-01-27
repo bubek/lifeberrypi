@@ -7,5 +7,3 @@ killall feh
 $HDMI -p
 . /etc/rc.local
 
-
-
