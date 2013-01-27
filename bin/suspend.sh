@@ -6,6 +6,6 @@ DIRECTORY=`dirname $0`
 # suspend the slideshow
 $XDOTOOL key h
 $HDMI -o
-
+killall feh
 
 
