@@ -17,8 +17,10 @@ if [ "$_IP" ]; then
   printf "My IP address is %s\n" "$_IP"
 fi
 
-su -c startx pi &
 export DISPLAY=":0.0"
-python /home/pi/Ardumote &
+su -c startx pi &
+
+echo "Starting LifeberryPI MotionSensor"
+python /root/lifeberrypi/bin/Listen.py &
 
 exit 0

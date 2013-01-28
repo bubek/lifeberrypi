@@ -6,4 +6,3 @@ DIRECTORY=`dirname $0`
 killall feh
 $HDMI -p
 . /etc/rc.local
-
