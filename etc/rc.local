@@ -23,4 +23,7 @@ su -c startx pi &
 echo "Starting LifeberryPI MotionSensor"
 python /root/lifeberrypi/bin/Listen.py &
 
+echo "Starting LifeberryRemote"
+python /root/lifeberrypi/bin/Remote.py &
+
 exit 0
