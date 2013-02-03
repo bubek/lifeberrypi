@@ -5,5 +5,4 @@ DIRECTORY=`dirname $0`
 
 $HDMI -o
 killall feh
-kill -9 `pidof X` 
-
+kill `pidof X` 

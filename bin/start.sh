@@ -3,6 +3,12 @@
 DIRECTORY=`dirname $0`
 . ${DIRECTORY}/common.sh
 
-killall feh
 $HDMI -p
-. /etc/rc.local
+
+killall feh
+kill `pidof X`
+
+su -c startx pi &
+sleep 2
+killall feh
+su -c startx pi &
