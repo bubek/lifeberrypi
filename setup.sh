@@ -15,3 +15,5 @@ git config --global user.email vivek.bhaskaran@surveyanalytics.com
 cp etc/rc.local /etc/
 cp pi/.xinitrc ~pi/
 chown pi:pi ~pi/.xinitrc
+
+apt-get install postfix mailutils
