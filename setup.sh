@@ -18,4 +18,6 @@ cp etc/rc.local /etc/
 cp pi/.xinitrc ~pi/
 chown pi:pi ~pi/.xinitrc
 
+cp www/* /usr/share/nginx/www
+
 apt-get install postfix mailutils
