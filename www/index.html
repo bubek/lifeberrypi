@@ -1,0 +1,186 @@
+<html>
+<head>
+<title>LifeberryPI</title>
+<script src="/js/exif-js/exif.js"></script>
+<script src="http://momentjs.com/downloads/moment.min.js"></script>
+
+<style>
+div.description {
+    position:absolute; 
+    bottom:0px; /* position will be on bottom */  
+    /* styling bellow */  
+    background-color:black;  
+    font-family: 'tahoma';  
+    font-size:15px;  
+    color:white;  
+    opacity:0.6; /* transparency */  
+    filter:alpha(opacity=60); /* IE transparency */  
+}
+
+.info {
+    position:fixed; 
+    top:0px; /* position will be on bottom */  
+    right:0px;
+    width: 200px;
+    height:200px;
+    /* styling bellow */  
+    background-color:black;  
+    font-family: 'tahoma';  
+    font-size:15px;  
+    color:white;  
+    opacity:0.6; /* transparency */  
+    filter:alpha(opacity=60); /* IE transparency */  
+}
+</style>
+
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+
+
+</head>
+<body bgcolor="#666" text="black">
+<div align="center" style="position:fixed; height: 100%; width: 100%; top:0;left 0;">
+  <div class="info">
+    <div id="infoTitle"></div>
+    <div id="infoContent"></div>
+
+    <iframe id="gps" width="200" height="150" frameborder="0">
+    </iframe>
+
+    <div style="padding-top:50px">
+      <button type="button" class="btn btn-default" onclick="rotate(this)">Rotate</button>
+      <button id="buttonFav" type="button" class="btn btn-primary" onclick="fav(this)">Favourite</button>
+    </div>
+
+
+   <div style="padding-top:50px">
+      <button type="button" class="btn btn-danger" onclick="deleteImage(this)">Delete</button>
+    </div>
+
+  </div>
+
+  <img id="img" src="/data/current/play.jpg" style="height:100%;image-orientation: from-image" />
+  <div id="caption" class="description"></div>
+
+</div>
+
+
+<script>
+  var captionObj = document.getElementById('caption');
+
+  function printCaption(content) {
+    captionObj.innerHTML = content;
+  } 
+
+  function printInfo(title, content, latlong) {
+    document.getElementById('infoTitle').innerHTML = title;
+
+    if (! content) {
+      content = "";
+    }
+    document.getElementById('infoContent').innerHTML = content;
+
+    var gpsContainer = document.getElementById("gps");
+
+    if (latlong) {
+      var url = "https://www.google.com/maps/embed/v1/view?key=AIzaSyA_RvRl8jgBhTS04P6mn6CWY77GRnbyJzM&zoom=10&center="  + latlong;
+
+      if (gpsContainer.gps != latlong) {
+        gpsContainer.src = url;        
+      }
+      gpsContainer.gps = latlong;
+    } else {
+      gpsContainer.src = "about:none";
+    }
+  }
+
+  function getGPSInfo(longitude, longitudeRef, latitude, latitudeRef) {
+    var flipLat = (latitudeRef == "S") ? -1 : 1;
+    var flipLong = (longitudeRef == "W") ? -1 : 1;
+
+    var lat = flipLat * (latitude[0] + latitude[1] / 60 + latitude[2] / 3600);
+    var lon = flipLong * (longitude[0] + longitude[1] / 60 + longitude[2] / 3600);
+    
+    return "" + lat + "," + lon;
+  }
+
+  function rotate(buttonElement) {
+    exec("/cgi-bin/rotate", buttonElement)    
+  }
+
+  function fav(buttonElement) {
+    exec("/cgi-bin/fav", buttonElement)
+  }
+
+  function deleteImage(buttonElement) {
+    exec("/cgi-bin/delete", buttonElement)
+  }
+
+  function exec(url, button) {
+               var name = button.innerHTML;
+               button.innerHTML = "...";
+               var http = new XMLHttpRequest();
+               http.onload = function() {
+                    if (this.status == 200 || this.status === 0) {
+                      button.innerHTML = name; 
+                      console.log(http.response);
+                    } else {
+                        throw "Could not load image";
+                    }
+                    http = null;
+                };
+                http.open("GET", url, true);
+                http.responseType = "html";
+                http.send(null);
+  }
+
+  function reload() { 
+    var url = "/data/current/play.jpg";
+    var imgObj = document.getElementById('img');
+    var captionObj = document.getElementById('caption');
+    imgObj.src = url + "?" + Math.random();    
+
+    imgObj.onload = function() {
+      var retval = EXIF.getData(this, function() {
+
+        var datetime = EXIF.getTag(this, "DateTime");
+        if (!datetime) {
+          datetime = EXIF.getTag(this, "DateTimeOriginal");
+        }       
+
+        printCaption(datetime);
+
+        var make = EXIF.getTag(this, "Make"); 
+        var model = EXIF.getTag(this, "Model"); 
+
+        var longitude = EXIF.getTag(this, "GPSLongitude");
+        var longitudeRef = EXIF.getTag(this, "GPSLongitudeRef");
+        var latitude = EXIF.getTag(this, "GPSLatitude");
+        var latitudeRef = EXIF.getTag(this, "GPSLatitudeRef");
+        var latlong;
+      
+        if (latitude && longitude && latitudeRef && longitudeRef) {
+          latlong = getGPSInfo(longitude, longitudeRef, latitude, latitudeRef);
+        }
+
+        printInfo(model, null, latlong);
+
+        imgObj.exifdata = null;
+      });
+    }
+    captionObj.style.width = imgObj.width;
+    captionObj.style.left = (window.innerWidth - imgObj.width)/2;
+  }
+
+  setInterval(reload, 1500);
+</script>
+</body>
+</html>
