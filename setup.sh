@@ -6,6 +6,8 @@ mkdir /data
 chown pi:pi /data
 mkdir /data/current
 chown pi:pi /data/current
+mkdir /data/archive
+chown pi:pi /data/archive
 
 
 git config --global user.name "Vivek Bhaskaran"
